@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.1.0](https://github.com/CloudNationHQ/terraform-azure-cog/compare/v2.0.0...v2.1.0) (2025-10-10)
+
+
+### Features
+
+* add property dynamic_throttling_enabled ([#20](https://github.com/CloudNationHQ/terraform-azure-cog/issues/20)) ([094ab6e](https://github.com/CloudNationHQ/terraform-azure-cog/commit/094ab6ee79f812ad244da20ad6b5a1c439227d88))
+
+
+### Bug Fixes
+
+* lint ([84f34c9](https://github.com/CloudNationHQ/terraform-azure-cog/commit/84f34c92d7d92917af51c79b9458558be7024baf))
+
 ## [2.0.0](https://github.com/CloudNationHQ/terraform-azure-cog/compare/v1.1.1...v2.0.0) (2025-05-08)
 
 
