@@ -87,8 +87,8 @@ resource "azurerm_cognitive_deployment" "deployment" {
     each.value.name,
     join("-", [var.naming.cognitive_deployment, each.key])
   )
-  cognitive_account_id        = azurerm_cognitive_account.cognitive_account.id
-  dynamic_throttling_enabled  = each.value.dynamic_throttling_enabled
+  cognitive_account_id       = azurerm_cognitive_account.cognitive_account.id
+  dynamic_throttling_enabled = each.value.dynamic_throttling_enabled
 
   model {
     format  = each.value.model.format
