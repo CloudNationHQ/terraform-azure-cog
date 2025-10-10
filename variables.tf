@@ -41,7 +41,8 @@ variable "account" {
       }))
     }))
     deployments = optional(map(object({
-      name = optional(string)
+      name                       = optional(string)
+      dynamic_throttling_enabled = optional(string)
       model = object({
         format  = string
         name    = string
