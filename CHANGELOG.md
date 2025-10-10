@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/CloudNationHQ/terraform-azure-cog/compare/v2.1.0...v2.1.1) (2025-10-10)
+
+
+### Bug Fixes
+
+* type definitions ([#22](https://github.com/CloudNationHQ/terraform-azure-cog/issues/22)) ([012fabb](https://github.com/CloudNationHQ/terraform-azure-cog/commit/012fabbf90fd0f0ea1f128817e40490957c80868))
+
 ## [2.1.0](https://github.com/CloudNationHQ/terraform-azure-cog/compare/v2.0.0...v2.1.0) (2025-10-10)
 
 
