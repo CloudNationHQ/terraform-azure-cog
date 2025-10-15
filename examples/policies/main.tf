@@ -46,12 +46,21 @@ module "cognitiveservices" {
     policies = {
       example = {
         base_policy_name = "Microsoft.Default"
-        content_filter = {
-          name               = "Hate"
-          filter_enabled     = true
-          block_enabled      = true
-          severity_threshold = "High"
-          source             = "Prompt"
+        content_filters = {
+          filter_hate = {
+            name               = "Hate"
+            filter_enabled     = true
+            block_enabled      = true
+            severity_threshold = "High"
+            source             = "Prompt"
+          }
+          filter_violence = {
+            name               = "Violence"
+            filter_enabled     = true
+            block_enabled      = true
+            severity_threshold = "Low"
+            source             = "Completion"
+          }
         }
       }
     }
