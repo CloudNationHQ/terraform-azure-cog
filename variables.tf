@@ -65,13 +65,13 @@ variable "account" {
       base_policy_name = string
       mode             = optional(string)
       tags             = optional(map(string))
-      content_filter = object({
+      content_filters = map(object({
         name               = string
         filter_enabled     = bool
         block_enabled      = bool
         severity_threshold = string
         source             = string
-      })
+      }))
     })))
   })
 

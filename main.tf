@@ -134,12 +134,15 @@ resource "azurerm_cognitive_account_rai_policy" "policy" {
   cognitive_account_id = azurerm_cognitive_account.cognitive_account.id
   base_policy_name     = each.value.base_policy_name
 
-  content_filter {
-    name               = each.value.content_filter.name
-    filter_enabled     = each.value.content_filter.filter_enabled
-    block_enabled      = each.value.content_filter.block_enabled
-    severity_threshold = each.value.content_filter.severity_threshold
-    source             = each.value.content_filter.source
+  dynamic "content_filter" {
+    for_each = each.value.content_filters
+    content {
+      name               = content_filter.value.name
+      filter_enabled     = content_filter.value.filter_enabled
+      block_enabled      = content_filter.value.block_enabled
+      severity_threshold = content_filter.value.severity_threshold
+      source             = content_filter.value.source
+    }
   }
 
   tags = coalesce(

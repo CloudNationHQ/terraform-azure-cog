@@ -88,7 +88,8 @@ object({
       }))
     }))
     deployments = optional(map(object({
-      name = optional(string)
+      name                       = optional(string)
+      dynamic_throttling_enabled = optional(string)
       model = object({
         format  = string
         name    = string
@@ -111,13 +112,13 @@ object({
       base_policy_name = string
       mode             = optional(string)
       tags             = optional(map(string))
-      content_filter = object({
+      content_filters = map(object({
         name               = string
         filter_enabled     = bool
         block_enabled      = bool
         severity_threshold = string
         source             = string
-      })
+      }))
     })))
   })
 ```
