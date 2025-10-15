@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.2](https://github.com/CloudNationHQ/terraform-azure-cog/compare/v2.1.1...v2.1.2) (2025-10-15)
+
+
+### Bug Fixes
+
+* content filters block ([#24](https://github.com/CloudNationHQ/terraform-azure-cog/issues/24)) ([f6912af](https://github.com/CloudNationHQ/terraform-azure-cog/commit/f6912afa343c2f7507927b57984359a9572713ae))
+
 ## [2.1.1](https://github.com/CloudNationHQ/terraform-azure-cog/compare/v2.1.0...v2.1.1) (2025-10-10)
 
 
