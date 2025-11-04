@@ -24,6 +24,7 @@ resource "azurerm_cognitive_account" "cognitive_account" {
   metrics_advisor_website_name                 = var.account.metrics_advisor_website_name
   outbound_network_access_restricted           = var.account.outbound_network_access_restricted
   public_network_access_enabled                = var.account.public_network_access_enabled
+  project_management_enabled                   = var.account.project_management_enabled
   qna_runtime_endpoint                         = var.account.qna_runtime_endpoint
   custom_question_answering_search_service_id  = var.account.custom_question_answering_search_service_id
   custom_question_answering_search_service_key = var.account.custom_question_answering_search_service_key
@@ -64,6 +65,7 @@ resource "azurerm_cognitive_account" "cognitive_account" {
     content {
       default_action = network_acls.value.default_action
       ip_rules       = network_acls.value.ip_rules
+      bypass         = network_acls.value.bypass
 
       dynamic "virtual_network_rules" {
         for_each = try(network_acls.value.virtual_network_rules, null) != null ? { default = network_acls.value.virtual_network_rules } : {}
@@ -73,6 +75,15 @@ resource "azurerm_cognitive_account" "cognitive_account" {
           ignore_missing_vnet_service_endpoint = virtual_network_rules.value.ignore_missing_vnet_service_endpoint
         }
       }
+    }
+  }
+
+  dynamic "network_injection" {
+    for_each = try(var.account.network_injection, null) != null ? { default = var.account.network_injection } : {}
+
+    content {
+      scenario  = network_injection.value.scenario
+      subnet_id = network_injection.value.subnet_id
     }
   }
 }
@@ -87,8 +98,11 @@ resource "azurerm_cognitive_deployment" "deployment" {
     each.value.name,
     join("-", [var.naming.cognitive_deployment, each.key])
   )
+
   cognitive_account_id       = azurerm_cognitive_account.cognitive_account.id
   dynamic_throttling_enabled = each.value.dynamic_throttling_enabled
+  rai_policy_name            = each.value.rai_policy_name
+  version_upgrade_option     = each.value.version_upgrade_option
 
   model {
     format  = each.value.model.format
@@ -133,6 +147,7 @@ resource "azurerm_cognitive_account_rai_policy" "policy" {
 
   cognitive_account_id = azurerm_cognitive_account.cognitive_account.id
   base_policy_name     = each.value.base_policy_name
+  mode                 = each.value.mode
 
   dynamic "content_filter" {
     for_each = each.value.content_filters
