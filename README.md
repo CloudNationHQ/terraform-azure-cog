@@ -49,8 +49,8 @@ Type:
 ```hcl
 object({
     name                                         = string
-    resource_group_name                          = optional(string, null)
-    location                                     = optional(string, null)
+    resource_group_name                          = optional(string)
+    location                                     = optional(string)
     tags                                         = optional(map(string))
     sku_name                                     = optional(string, "S0")
     kind                                         = optional(string, "CognitiveServices")
@@ -64,6 +64,7 @@ object({
     metrics_advisor_website_name                 = optional(string)
     outbound_network_access_restricted           = optional(bool, false)
     public_network_access_enabled                = optional(bool, false)
+    project_management_enabled                   = optional(bool, false)
     qna_runtime_endpoint                         = optional(string)
     custom_question_answering_search_service_id  = optional(string)
     custom_question_answering_search_service_key = optional(string)
@@ -76,20 +77,27 @@ object({
       identity_ids = optional(list(string), [])
     }))
     storage = optional(object({
-      storage_account_id = optional(string, null)
-      identity_client_id = optional(string, null)
+      storage_account_id = optional(string)
+      identity_client_id = optional(string)
     }))
     network_acls = optional(object({
       default_action = optional(string)
       ip_rules       = optional(list(string))
+      bypass         = optional(string)
       virtual_network_rules = optional(object({
         subnet_id                            = string
         ignore_missing_vnet_service_endpoint = optional(bool, false)
       }))
     }))
+    network_injection = optional(object({
+      scenario  = string
+      subnet_id = string
+    }))
     deployments = optional(map(object({
       name                       = optional(string)
-      dynamic_throttling_enabled = optional(string)
+      dynamic_throttling_enabled = optional(bool)
+      rai_policy_name            = optional(string)
+      version_upgrade_option     = optional(string)
       model = object({
         format  = string
         name    = string
