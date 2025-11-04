@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.2.0](https://github.com/CloudNationHQ/terraform-azure-cog/compare/v2.1.2...v2.2.0) (2025-11-04)
+
+
+### Features
+
+* add missing properties and remove redundant null values ([#26](https://github.com/CloudNationHQ/terraform-azure-cog/issues/26)) ([999eb4a](https://github.com/CloudNationHQ/terraform-azure-cog/commit/999eb4ae47805005c7a3a3e96198320ffce070bb))
+* **deps:** bump github.com/cloudnationhq/az-cn-go-validor in /tests ([#19](https://github.com/CloudNationHQ/terraform-azure-cog/issues/19)) ([c7de72a](https://github.com/CloudNationHQ/terraform-azure-cog/commit/c7de72a026b5d71164f99aef8200a4a7f8e839b2))
+* **deps:** bump github.com/ulikunitz/xz from 0.5.10 to 0.5.14 in /tests ([#16](https://github.com/CloudNationHQ/terraform-azure-cog/issues/16)) ([dd5e64e](https://github.com/CloudNationHQ/terraform-azure-cog/commit/dd5e64e046c594d2c950fd8cb18ddb56c0063248))
+
 ## [2.1.2](https://github.com/CloudNationHQ/terraform-azure-cog/compare/v2.1.1...v2.1.2) (2025-10-15)
 
 
