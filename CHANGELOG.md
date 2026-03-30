@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.3.0](https://github.com/CloudNationHQ/terraform-azure-cog/compare/v2.2.0...v2.3.0) (2026-03-30)
+
+
+### Features
+
+* add support for cognitive account projects ([#36](https://github.com/CloudNationHQ/terraform-azure-cog/issues/36)) ([736e012](https://github.com/CloudNationHQ/terraform-azure-cog/commit/736e012bb66e0d5adde8eb8b943f240e575f89a0))
+* **deps:** bump github.com/cloudnationhq/az-cn-go-validor in /tests ([#31](https://github.com/CloudNationHQ/terraform-azure-cog/issues/31)) ([9f638a3](https://github.com/CloudNationHQ/terraform-azure-cog/commit/9f638a39874822ee28053e8269efec2a3ea2782d))
+* **deps:** bump golang.org/x/crypto from 0.36.0 to 0.45.0 in /tests ([#29](https://github.com/CloudNationHQ/terraform-azure-cog/issues/29)) ([23d56a6](https://github.com/CloudNationHQ/terraform-azure-cog/commit/23d56a6dc7c2079f317aa23697d6ba3fe634738d))
+
+
+### Bug Fixes
+
+* add missing tags property to rai blocklist resource ([#37](https://github.com/CloudNationHQ/terraform-azure-cog/issues/37)) ([47db66f](https://github.com/CloudNationHQ/terraform-azure-cog/commit/47db66fb23013b1ef2cd2b968cc12debf1a345e1))
+
 ## [2.2.0](https://github.com/CloudNationHQ/terraform-azure-cog/compare/v2.1.2...v2.2.0) (2025-11-04)
 
 
