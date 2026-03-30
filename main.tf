@@ -132,6 +132,10 @@ resource "azurerm_cognitive_account_rai_blocklist" "blocklist" {
 
   cognitive_account_id = azurerm_cognitive_account.cognitive_account.id
   description          = each.value.description
+
+  tags = coalesce(
+    each.value.tags, var.tags
+  )
 }
 
 resource "azurerm_cognitive_account_rai_policy" "policy" {

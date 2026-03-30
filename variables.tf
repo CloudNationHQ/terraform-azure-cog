@@ -67,6 +67,7 @@ variable "account" {
     blocklists = optional(map(object({
       name        = optional(string)
       description = optional(string)
+      tags        = optional(map(string))
     })))
     policies = optional(map(object({
       name             = optional(string)
