@@ -32,6 +32,7 @@ The following providers are used by this module:
 The following resources are used by this module:
 
 - [azurerm_cognitive_account.cognitive_account](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account) (resource)
+- [azurerm_cognitive_account_project.project](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account_project) (resource)
 - [azurerm_cognitive_account_rai_blocklist.blocklist](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account_rai_blocklist) (resource)
 - [azurerm_cognitive_account_rai_policy.policy](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account_rai_policy) (resource)
 - [azurerm_cognitive_deployment.deployment](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_deployment) (resource)
@@ -128,6 +129,17 @@ object({
         source             = string
       }))
     })))
+    projects = optional(map(object({
+      name         = optional(string)
+      location     = optional(string)
+      description  = optional(string)
+      display_name = optional(string)
+      tags         = optional(map(string))
+      identity = object({
+        type         = optional(string, "SystemAssigned")
+        identity_ids = optional(list(string))
+      })
+    })))
   })
 ```
 
@@ -186,6 +198,10 @@ Description: Contains all the outputs for the cognitive deployments
 ### <a name="output_policies"></a> [policies](#output\_policies)
 
 Description: Contains all the outputs for the cognitive policies
+
+### <a name="output_projects"></a> [projects](#output\_projects)
+
+Description: Contains all the outputs for the cognitive account projects
 <!-- END_TF_DOCS -->
 
 ## Goals
