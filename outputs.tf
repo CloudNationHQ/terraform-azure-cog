@@ -17,3 +17,8 @@ output "policies" {
   description = "Contains all the outputs for the cognitive policies"
   value       = azurerm_cognitive_account_rai_policy.policy
 }
+
+output "projects" {
+  description = "Contains all the outputs for the cognitive account projects"
+  value       = azurerm_cognitive_account_project.project
+}

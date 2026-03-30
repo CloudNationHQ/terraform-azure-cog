@@ -164,3 +164,37 @@ resource "azurerm_cognitive_account_rai_policy" "policy" {
     each.value.tags, var.tags
   )
 }
+
+resource "azurerm_cognitive_account_project" "project" {
+  for_each = coalesce(
+    var.account.projects != null ? var.account.projects : {},
+    {}
+  )
+
+  name = coalesce(
+    each.value.name,
+    "project-${each.key}"
+  )
+
+  cognitive_account_id = azurerm_cognitive_account.cognitive_account.id
+
+  location = coalesce(
+    each.value.location,
+    azurerm_cognitive_account.cognitive_account.location
+  )
+
+  description  = each.value.description
+  display_name = each.value.display_name
+
+  dynamic "identity" {
+    for_each = try(each.value.identity, null) != null ? { default = each.value.identity } : {}
+    content {
+      type         = identity.value.type
+      identity_ids = identity.value.identity_ids
+    }
+  }
+
+  tags = coalesce(
+    each.value.tags, var.tags
+  )
+}

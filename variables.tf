@@ -81,6 +81,17 @@ variable "account" {
         source             = string
       }))
     })))
+    projects = optional(map(object({
+      name         = optional(string)
+      location     = optional(string)
+      description  = optional(string)
+      display_name = optional(string)
+      tags         = optional(map(string))
+      identity = optional(object({
+        type         = optional(string, "SystemAssigned")
+        identity_ids = optional(list(string), [])
+      }))
+    })))
   })
 
   validation {
