@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.0](https://github.com/CloudNationHQ/terraform-azure-cog/compare/v2.3.0...v2.4.0) (2026-05-04)
+
+
+### Features
+
+* **deps:** bump github.com/cloudnationhq/az-cn-go-validor in /tests ([#39](https://github.com/CloudNationHQ/terraform-azure-cog/issues/39)) ([00cbb43](https://github.com/CloudNationHQ/terraform-azure-cog/commit/00cbb43e92aa2784d1324dfa0c44ee05becf3099))
+* **deps:** bump github.com/cloudnationhq/az-cn-go-validor in /tests ([#41](https://github.com/CloudNationHQ/terraform-azure-cog/issues/41)) ([feac99a](https://github.com/CloudNationHQ/terraform-azure-cog/commit/feac99a49b98e75b2615eb68705c25d9cc934b0f))
+
 ## [2.3.0](https://github.com/CloudNationHQ/terraform-azure-cog/compare/v2.2.0...v2.3.0) (2026-03-30)
 
 
