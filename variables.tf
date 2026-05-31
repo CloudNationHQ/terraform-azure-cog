@@ -88,10 +88,10 @@ variable "account" {
       description  = optional(string)
       display_name = optional(string)
       tags         = optional(map(string))
-      identity = object({
+      identity = optional(object({
         type         = optional(string, "SystemAssigned")
         identity_ids = optional(list(string))
-      })
+      }))
     })))
   })
 

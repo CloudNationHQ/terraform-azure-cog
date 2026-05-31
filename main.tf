@@ -190,9 +190,13 @@ resource "azurerm_cognitive_account_project" "project" {
   description  = each.value.description
   display_name = each.value.display_name
 
-  identity {
-    type         = each.value.identity.type
-    identity_ids = each.value.identity.identity_ids
+  dynamic "identity" {
+    for_each = try(each.value.identity, null) != null ? { default = each.value.identity } : {}
+
+    content {
+      type         = identity.value.type
+      identity_ids = identity.value.identity_ids
+    }
   }
 
   tags = coalesce(
