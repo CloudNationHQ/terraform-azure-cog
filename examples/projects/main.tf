@@ -17,6 +17,17 @@ module "rg" {
   }
 }
 
+module "uai" {
+  source  = "cloudnationhq/uai/azure"
+  version = "~> 2.0"
+
+  config = {
+    name                = "${module.naming.user_assigned_identity.name}-fa"
+    location            = module.rg.groups.demo.location
+    resource_group_name = module.rg.groups.demo.name
+  }
+}
+
 module "cognitiveservices" {
   source  = "cloudnationhq/cog/azure"
   version = "~> 2.0"
@@ -40,6 +51,12 @@ module "cognitiveservices" {
       example = {
         identity = {
           type = "SystemAssigned"
+        }
+      }
+      uai_example = {
+        identity = {
+          type         = "UserAssigned"
+          identity_ids = [module.uai.config.id]
         }
       }
     }
