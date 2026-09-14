@@ -19,23 +19,23 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.0)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 5.0)
 
 ## Providers
 
 The following providers are used by this module:
 
-- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (~> 4.0)
+- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (~> 5.0)
 
 ## Resources
 
 The following resources are used by this module:
 
-- [azurerm_cognitive_account.cognitive_account](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account) (resource)
-- [azurerm_cognitive_account_project.project](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account_project) (resource)
-- [azurerm_cognitive_account_rai_blocklist.blocklist](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account_rai_blocklist) (resource)
-- [azurerm_cognitive_account_rai_policy.policy](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account_rai_policy) (resource)
-- [azurerm_cognitive_deployment.deployment](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_deployment) (resource)
+- [azurerm_cognitive_account.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account) (resource)
+- [azurerm_cognitive_account_project.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account_project) (resource)
+- [azurerm_cognitive_account_rai_blocklist.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account_rai_blocklist) (resource)
+- [azurerm_cognitive_account_rai_policy.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account_rai_policy) (resource)
+- [azurerm_cognitive_deployment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_deployment) (resource)
 
 ## Required Inputs
 
@@ -58,14 +58,14 @@ object({
     custom_subdomain_name                        = optional(string)
     dynamic_throttling_enabled                   = optional(bool, false)
     fqdns                                        = optional(list(string))
-    local_auth_enabled                           = optional(bool, false)
+    local_auth_enabled                           = optional(bool)
     metrics_advisor_aad_client_id                = optional(string)
     metrics_advisor_aad_tenant_id                = optional(string)
     metrics_advisor_super_user_name              = optional(string)
     metrics_advisor_website_name                 = optional(string)
-    outbound_network_access_restricted           = optional(bool, false)
-    public_network_access_enabled                = optional(bool, false)
-    project_management_enabled                   = optional(bool, false)
+    outbound_network_access_restricted           = optional(bool)
+    public_network_access_enabled                = optional(bool)
+    project_management_enabled                   = optional(bool)
     qna_runtime_endpoint                         = optional(string)
     custom_question_answering_search_service_id  = optional(string)
     custom_question_answering_search_service_key = optional(string)
@@ -77,18 +77,18 @@ object({
       type         = optional(string, "UserAssigned")
       identity_ids = optional(list(string), [])
     }))
-    storage = optional(object({
-      storage_account_id = optional(string)
+    storage = optional(map(object({
+      storage_account_id = string
       identity_client_id = optional(string)
-    }))
+    })), {})
     network_acls = optional(object({
-      default_action = optional(string)
+      default_action = string
       ip_rules       = optional(list(string))
       bypass         = optional(string)
-      virtual_network_rules = optional(object({
+      virtual_network_rules = optional(map(object({
         subnet_id                            = string
         ignore_missing_vnet_service_endpoint = optional(bool, false)
-      }))
+      })), {})
     }))
     network_injection = optional(object({
       scenario  = string
@@ -111,25 +111,25 @@ object({
         family   = optional(string)
         capacity = optional(number)
       })
-    })))
+    })), {})
     blocklists = optional(map(object({
       name        = optional(string)
       description = optional(string)
       tags        = optional(map(string))
-    })))
+    })), {})
     policies = optional(map(object({
       name             = optional(string)
       base_policy_name = string
       mode             = optional(string)
       tags             = optional(map(string))
       content_filters = map(object({
-        name               = string
+        name               = optional(string)
         filter_enabled     = bool
         block_enabled      = bool
         severity_threshold = string
         source             = string
       }))
-    })))
+    })), {})
     projects = optional(map(object({
       name         = optional(string)
       location     = optional(string)
@@ -140,7 +140,7 @@ object({
         type         = optional(string, "SystemAssigned")
         identity_ids = optional(list(string))
       })
-    })))
+    })), {})
   })
 ```
 
@@ -153,14 +153,6 @@ The following input variables are optional (have default values):
 Description: default azure region to be used.
 
 Type: `string`
-
-Default: `null`
-
-### <a name="input_naming"></a> [naming](#input\_naming)
-
-Description: contains naming convention
-
-Type: `map(string)`
 
 Default: `null`
 
@@ -225,11 +217,7 @@ To update the module's documentation run `make doc`
 
 We welcome contributions from the community! Whether it's reporting a bug, suggesting a new feature, or submitting a pull request, your input is highly valued.
 
-For more information, please see our contribution [guidelines](./CONTRIBUTING.md). <br><br>
-
-<a href="https://github.com/cloudnationhq/terraform-azure-cog/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=cloudnationhq/terraform-azure-cog" />
-</a>
+For more information, please see our contribution [guidelines](./CONTRIBUTING.md).
 
 ## License
 
