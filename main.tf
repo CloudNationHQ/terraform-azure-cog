@@ -1,14 +1,10 @@
-resource "azurerm_cognitive_account" "cognitive_account" {
-
+resource "azurerm_cognitive_account" "this" {
   resource_group_name = coalesce(
-    lookup(
-      var.account, "resource_group_name", null
-    ), var.resource_group_name
+    var.account.resource_group_name, var.resource_group_name
   )
 
   location = coalesce(
-    lookup(var.account, "location", null
-    ), var.location
+    var.account.location, var.location
   )
 
   name                                         = var.account.name
@@ -34,7 +30,7 @@ resource "azurerm_cognitive_account" "cognitive_account" {
   )
 
   dynamic "customer_managed_key" {
-    for_each = try(var.account.customer_managed_key, null) != null ? [var.account.customer_managed_key] : []
+    for_each = var.account.customer_managed_key != null ? { this = var.account.customer_managed_key } : {}
 
     content {
       key_vault_key_id   = customer_managed_key.value.key_vault_key_id
@@ -43,7 +39,7 @@ resource "azurerm_cognitive_account" "cognitive_account" {
   }
 
   dynamic "identity" {
-    for_each = try(var.account.identity, null) != null ? { default = var.account.identity } : {}
+    for_each = var.account.identity != null ? { this = var.account.identity } : {}
     content {
       type         = identity.value.type
       identity_ids = identity.value.identity_ids
@@ -51,7 +47,7 @@ resource "azurerm_cognitive_account" "cognitive_account" {
   }
 
   dynamic "storage" {
-    for_each = try(var.account.storage, null) != null ? { default = var.account.storage } : {}
+    for_each = var.account.storage
 
     content {
       storage_account_id = storage.value.storage_account_id
@@ -60,7 +56,7 @@ resource "azurerm_cognitive_account" "cognitive_account" {
   }
 
   dynamic "network_acls" {
-    for_each = try(var.account.network_acls, null) != null ? { default = var.account.network_acls } : {}
+    for_each = var.account.network_acls != null ? { this = var.account.network_acls } : {}
 
     content {
       default_action = network_acls.value.default_action
@@ -68,7 +64,7 @@ resource "azurerm_cognitive_account" "cognitive_account" {
       bypass         = network_acls.value.bypass
 
       dynamic "virtual_network_rules" {
-        for_each = try(network_acls.value.virtual_network_rules, null) != null ? { default = network_acls.value.virtual_network_rules } : {}
+        for_each = network_acls.value.virtual_network_rules
 
         content {
           subnet_id                            = virtual_network_rules.value.subnet_id
@@ -79,7 +75,7 @@ resource "azurerm_cognitive_account" "cognitive_account" {
   }
 
   dynamic "network_injection" {
-    for_each = try(var.account.network_injection, null) != null ? { default = var.account.network_injection } : {}
+    for_each = var.account.network_injection != null ? { this = var.account.network_injection } : {}
 
     content {
       scenario  = network_injection.value.scenario
@@ -88,18 +84,14 @@ resource "azurerm_cognitive_account" "cognitive_account" {
   }
 }
 
-resource "azurerm_cognitive_deployment" "deployment" {
-  for_each = coalesce(
-    var.account.deployments != null ? var.account.deployments : {},
-    {}
-  )
+resource "azurerm_cognitive_deployment" "this" {
+  for_each = var.account.deployments
 
   name = coalesce(
-    each.value.name,
-    join("-", [var.naming.cognitive_deployment, each.key])
+    each.value.name, each.key
   )
 
-  cognitive_account_id       = azurerm_cognitive_account.cognitive_account.id
+  cognitive_account_id       = azurerm_cognitive_account.this.id
   dynamic_throttling_enabled = each.value.dynamic_throttling_enabled
   rai_policy_name            = each.value.rai_policy_name
   version_upgrade_option     = each.value.version_upgrade_option
@@ -120,17 +112,14 @@ resource "azurerm_cognitive_deployment" "deployment" {
 }
 
 # blocklist
-resource "azurerm_cognitive_account_rai_blocklist" "blocklist" {
-  for_each = coalesce(
-    var.account.blocklists != null ? var.account.blocklists : {},
-    {}
-  )
+resource "azurerm_cognitive_account_rai_blocklist" "this" {
+  for_each = var.account.blocklists
 
   name = coalesce(
-    each.value.name,
-  "blocklist-${each.key}")
+    each.value.name, each.key
+  )
 
-  cognitive_account_id = azurerm_cognitive_account.cognitive_account.id
+  cognitive_account_id = azurerm_cognitive_account.this.id
   description          = each.value.description
 
   tags = coalesce(
@@ -138,23 +127,20 @@ resource "azurerm_cognitive_account_rai_blocklist" "blocklist" {
   )
 }
 
-resource "azurerm_cognitive_account_rai_policy" "policy" {
-  for_each = coalesce(
-    var.account.policies != null ? var.account.policies : {},
-    {}
-  )
+resource "azurerm_cognitive_account_rai_policy" "this" {
+  for_each = var.account.policies
 
   name = coalesce(
-    each.value.name,
-    "policy-${each.key}"
+    each.value.name, each.key
   )
 
-  cognitive_account_id = azurerm_cognitive_account.cognitive_account.id
+  cognitive_account_id = azurerm_cognitive_account.this.id
   base_policy_name     = each.value.base_policy_name
   mode                 = each.value.mode
 
   dynamic "content_filter" {
     for_each = each.value.content_filters
+
     content {
       name               = content_filter.value.name
       filter_enabled     = content_filter.value.filter_enabled
@@ -169,26 +155,22 @@ resource "azurerm_cognitive_account_rai_policy" "policy" {
   )
 }
 
-resource "azurerm_cognitive_account_project" "project" {
-  for_each = coalesce(
-    var.account.projects != null ? var.account.projects : {},
-    {}
-  )
+resource "azurerm_cognitive_account_project" "this" {
+  for_each = var.account.projects
 
   name = coalesce(
-    each.value.name,
-    "project-${each.key}"
+    each.value.name, each.key
   )
 
-  cognitive_account_id = azurerm_cognitive_account.cognitive_account.id
 
   location = coalesce(
     each.value.location,
-    azurerm_cognitive_account.cognitive_account.location
+    azurerm_cognitive_account.this.location
   )
 
-  description  = each.value.description
-  display_name = each.value.display_name
+  cognitive_account_id = azurerm_cognitive_account.this.id
+  description          = each.value.description
+  display_name         = each.value.display_name
 
   identity {
     type         = each.value.identity.type
