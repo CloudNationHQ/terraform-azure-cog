@@ -31,8 +31,8 @@ module "cognitiveservices" {
     deployments = {
       gpt-4o = {
         model = {
-          format  = "OpenAI"
-          name    = "gpt-4o"
+          format = "OpenAI"
+          name   = "gpt-4o"
         }
         sku = {
           name     = "DataZoneStandard"
