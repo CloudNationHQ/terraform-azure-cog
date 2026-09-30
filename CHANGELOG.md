@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0](https://github.com/CloudNationHQ/terraform-azure-cog/compare/v3.0.0...v3.1.0) (2026-09-30)
+
+
+### Features
+
+* add foundry projects, connections, capability hosts, role assignments and customer managed key ([#47](https://github.com/CloudNationHQ/terraform-azure-cog/issues/47)) ([1422d25](https://github.com/CloudNationHQ/terraform-azure-cog/commit/1422d25ad25c9c73c1831ac93e80f06beb189873))
+
 ## [3.0.0](https://github.com/CloudNationHQ/terraform-azure-cog/compare/v2.3.0...v3.0.0) (2026-09-14)
 
 
