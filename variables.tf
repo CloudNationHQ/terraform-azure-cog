@@ -24,6 +24,7 @@ variable "account" {
     customer_managed_key = optional(object({
       key_vault_key_id   = string
       identity_client_id = optional(string)
+      standalone         = optional(bool, false)
     }))
     identity = optional(object({
       type         = optional(string, "UserAssigned")
@@ -88,11 +89,68 @@ variable "account" {
       description  = optional(string)
       display_name = optional(string)
       tags         = optional(map(string))
-      identity = object({
+      identity = optional(object({
         type         = optional(string, "SystemAssigned")
         identity_ids = optional(list(string))
-      })
+      }), {})
+      role_assignments = optional(map(object({
+        scope                                  = string
+        principal_id                           = optional(string)
+        name                                   = optional(string)
+        role_definition_name                   = optional(string)
+        role_definition_id                     = optional(string)
+        description                            = optional(string)
+        principal_type                         = optional(string, "ServicePrincipal")
+        condition                              = optional(string)
+        condition_version                      = optional(string)
+        delegated_managed_identity_resource_id = optional(string)
+        skip_service_principal_aad_check       = optional(bool)
+      })), {})
+      connections = optional(map(object({
+        name      = optional(string)
+        category  = string
+        target    = string
+        auth_type = optional(string, "AAD")
+        metadata  = optional(map(string), {})
+      })), {})
+      capability_host = optional(object({
+        name                       = optional(string)
+        capability_host_kind       = optional(string, "Agents")
+        storage_connections        = optional(list(string), [])
+        thread_storage_connections = optional(list(string), [])
+        vector_store_connections   = optional(list(string), [])
+      }))
     })), {})
+    role_assignments = optional(map(object({
+      scope                                  = optional(string)
+      principal_id                           = optional(string)
+      name                                   = optional(string)
+      role_definition_name                   = optional(string)
+      role_definition_id                     = optional(string)
+      description                            = optional(string)
+      principal_type                         = optional(string)
+      condition                              = optional(string)
+      condition_version                      = optional(string)
+      delegated_managed_identity_resource_id = optional(string)
+      skip_service_principal_aad_check       = optional(bool)
+    })), {})
+    connections = optional(map(object({
+      name        = optional(string)
+      category    = string
+      target      = optional(string)
+      auth_type   = optional(string, "AAD")
+      metadata    = optional(map(string), {})
+      api_key     = optional(string)
+      account_key = optional(string)
+      custom_keys = optional(map(string))
+    })), {})
+    capability_host = optional(object({
+      name                       = optional(string)
+      capability_host_kind       = optional(string, "Agents")
+      storage_connections        = optional(list(string), [])
+      thread_storage_connections = optional(list(string), [])
+      vector_store_connections   = optional(list(string), [])
+    }))
   })
 
   validation {

@@ -1,3 +1,5 @@
+data "azurerm_client_config" "current" {}
+
 resource "azurerm_cognitive_account" "this" {
   resource_group_name = coalesce(
     var.account.resource_group_name, var.resource_group_name
@@ -30,7 +32,7 @@ resource "azurerm_cognitive_account" "this" {
   )
 
   dynamic "customer_managed_key" {
-    for_each = var.account.customer_managed_key != null ? { this = var.account.customer_managed_key } : {}
+    for_each = var.account.customer_managed_key != null && !var.account.customer_managed_key.standalone ? { this = var.account.customer_managed_key } : {}
 
     content {
       key_vault_key_id   = customer_managed_key.value.key_vault_key_id
@@ -111,7 +113,6 @@ resource "azurerm_cognitive_deployment" "this" {
   }
 }
 
-# blocklist
 resource "azurerm_cognitive_account_rai_blocklist" "this" {
   for_each = var.account.blocklists
 
@@ -180,4 +181,227 @@ resource "azurerm_cognitive_account_project" "this" {
   tags = coalesce(
     each.value.tags, var.tags
   )
+}
+
+resource "azurerm_cognitive_account_customer_managed_key" "this" {
+  for_each = var.account.customer_managed_key != null && var.account.customer_managed_key.standalone ? { this = var.account.customer_managed_key } : {}
+
+  cognitive_account_id = azurerm_cognitive_account.this.id
+  key_vault_key_id     = each.value.key_vault_key_id
+  identity_client_id   = each.value.identity_client_id
+
+  depends_on = [azurerm_role_assignment.this]
+}
+
+resource "azurerm_role_assignment" "this" {
+  for_each = merge(
+    {
+      for key, assignment in var.account.role_assignments :
+      key => merge(assignment, {
+        scope        = coalesce(assignment.scope, azurerm_cognitive_account.this.id)
+        principal_id = coalesce(assignment.principal_id, data.azurerm_client_config.current.object_id)
+      })
+    },
+    merge([
+      for project_key, project in var.account.projects : {
+        for key, assignment in project.role_assignments :
+        "${project_key}.${key}" => merge(assignment, {
+          principal_id = coalesce(assignment.principal_id, azurerm_cognitive_account_project.this[project_key].identity[0].principal_id)
+        })
+      }
+    ]...)
+  )
+
+  name                                   = each.value.name
+  scope                                  = each.value.scope
+  principal_id                           = each.value.principal_id
+  role_definition_name                   = each.value.role_definition_name
+  role_definition_id                     = each.value.role_definition_id
+  description                            = each.value.description
+  principal_type                         = each.value.principal_type
+  condition                              = each.value.condition
+  condition_version                      = each.value.condition_version
+  delegated_managed_identity_resource_id = each.value.delegated_managed_identity_resource_id
+  skip_service_principal_aad_check       = each.value.skip_service_principal_aad_check
+}
+
+resource "azurerm_cognitive_account_connection_entra_id" "this" {
+  for_each = {
+    for key, connection in var.account.connections :
+    key => connection if connection.auth_type == "AAD"
+  }
+
+  name = coalesce(
+    each.value.name, each.key
+  )
+
+  cognitive_account_id = azurerm_cognitive_account.this.id
+  category             = each.value.category
+  target               = each.value.target
+  metadata             = each.value.metadata
+}
+
+resource "azurerm_cognitive_account_connection_account_managed_identity" "this" {
+  for_each = {
+    for key, connection in var.account.connections :
+    key => connection if connection.auth_type == "ManagedIdentity"
+  }
+
+  name = coalesce(
+    each.value.name, each.key
+  )
+
+  cognitive_account_id = azurerm_cognitive_account.this.id
+  category             = each.value.category
+  target               = each.value.target
+  metadata             = each.value.metadata
+}
+
+resource "azurerm_cognitive_account_connection_api_key" "this" {
+  for_each = {
+    for key, connection in var.account.connections :
+    key => connection if connection.auth_type == "ApiKey"
+  }
+
+  name = coalesce(
+    each.value.name, each.key
+  )
+
+  cognitive_account_id = azurerm_cognitive_account.this.id
+  category             = each.value.category
+  target               = each.value.target
+  metadata             = each.value.metadata
+  api_key              = each.value.api_key
+}
+
+resource "azurerm_cognitive_account_connection_account_key" "this" {
+  for_each = {
+    for key, connection in var.account.connections :
+    key => connection if connection.auth_type == "AccountKey"
+  }
+
+  name = coalesce(
+    each.value.name, each.key
+  )
+
+  cognitive_account_id = azurerm_cognitive_account.this.id
+  category             = each.value.category
+  target               = each.value.target
+  metadata             = each.value.metadata
+  account_key          = each.value.account_key
+}
+
+resource "azurerm_cognitive_account_connection_custom_keys" "this" {
+  for_each = {
+    for key, connection in var.account.connections :
+    key => connection if connection.auth_type == "CustomKeys"
+  }
+
+  name = coalesce(
+    each.value.name, each.key
+  )
+
+  cognitive_account_id = azurerm_cognitive_account.this.id
+  category             = each.value.category
+  target               = each.value.target
+  metadata             = each.value.metadata
+  custom_keys          = each.value.custom_keys
+}
+
+resource "azapi_resource" "capability_host" {
+  for_each = var.account.capability_host != null ? { this = var.account.capability_host } : {}
+
+  name = coalesce(
+    each.value.name, "default"
+  )
+
+  body = {
+    properties = {
+      capabilityHostKind       = each.value.capability_host_kind
+      storageConnections       = each.value.storage_connections
+      threadStorageConnections = each.value.thread_storage_connections
+      vectorStoreConnections   = each.value.vector_store_connections
+    }
+  }
+
+  type                      = "Microsoft.CognitiveServices/accounts/capabilityHosts@2025-04-01-preview"
+  parent_id                 = azurerm_cognitive_account.this.id
+  schema_validation_enabled = false
+
+  retry = {
+    error_message_regex = ["RequestConflict", "TransientError", "Etag conflict"]
+  }
+
+  depends_on = [
+    azurerm_cognitive_account_connection_entra_id.this,
+    azurerm_cognitive_account_connection_account_managed_identity.this,
+    azurerm_cognitive_account_connection_api_key.this,
+    azurerm_cognitive_account_connection_account_key.this,
+    azurerm_cognitive_account_connection_custom_keys.this
+  ]
+}
+
+resource "azapi_resource" "project_connection" {
+  for_each = merge([
+    for project_key, project in var.account.projects : {
+      for connection_key, connection in project.connections :
+      "${project_key}.${connection_key}" => merge(connection, {
+        project_key = project_key
+        name        = coalesce(connection.name, connection_key)
+      })
+    }
+  ]...)
+
+  name = each.value.name
+
+  body = {
+    properties = {
+      category = each.value.category
+      target   = each.value.target
+      authType = each.value.auth_type
+      metadata = each.value.metadata
+    }
+  }
+
+  type                      = "Microsoft.CognitiveServices/accounts/projects/connections@2025-04-01-preview"
+  parent_id                 = azurerm_cognitive_account_project.this[each.value.project_key].id
+  schema_validation_enabled = false
+
+  retry = {
+    error_message_regex = ["RequestConflict", "TransientError", "Etag conflict"]
+  }
+}
+
+resource "azapi_resource" "project_capability_host" {
+  for_each = {
+    for project_key, project in var.account.projects :
+    project_key => project.capability_host if project.capability_host != null
+  }
+
+  name = coalesce(
+    each.value.name, "default"
+  )
+
+  body = {
+    properties = {
+      capabilityHostKind       = each.value.capability_host_kind
+      storageConnections       = each.value.storage_connections
+      threadStorageConnections = each.value.thread_storage_connections
+      vectorStoreConnections   = each.value.vector_store_connections
+    }
+  }
+
+  type                      = "Microsoft.CognitiveServices/accounts/projects/capabilityHosts@2025-04-01-preview"
+  parent_id                 = azurerm_cognitive_account_project.this[each.key].id
+  schema_validation_enabled = false
+
+  retry = {
+    error_message_regex = ["RequestConflict", "TransientError", "Etag conflict"]
+  }
+
+  depends_on = [
+    azapi_resource.capability_host,
+    azapi_resource.project_connection,
+    azurerm_role_assignment.this
+  ]
 }

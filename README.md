@@ -8,7 +8,9 @@ Flexible deployment of cognitive service accounts with multi-deployment capabili
 
 Network protection through ACLs and customizable network rules
 
-Support for customer managed keys and configurable blocklists
+Support for customer managed keys, configurable blocklists and content filter policies
+
+Foundry projects, account and project connections, capability hosts for agents and role assignments
 
 Utilization of terratest for robust validation.
 
@@ -19,11 +21,15 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.0)
 
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.0)
+
 - <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 5.0)
 
 ## Providers
 
 The following providers are used by this module:
+
+- <a name="provider_azapi"></a> [azapi](#provider\_azapi) (~> 2.0)
 
 - <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (~> 5.0)
 
@@ -31,11 +37,22 @@ The following providers are used by this module:
 
 The following resources are used by this module:
 
+- [azapi_resource.capability_host](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.project_capability_host](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.project_connection](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
 - [azurerm_cognitive_account.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account) (resource)
+- [azurerm_cognitive_account_connection_account_key.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account_connection_account_key) (resource)
+- [azurerm_cognitive_account_connection_account_managed_identity.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account_connection_account_managed_identity) (resource)
+- [azurerm_cognitive_account_connection_api_key.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account_connection_api_key) (resource)
+- [azurerm_cognitive_account_connection_custom_keys.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account_connection_custom_keys) (resource)
+- [azurerm_cognitive_account_connection_entra_id.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account_connection_entra_id) (resource)
+- [azurerm_cognitive_account_customer_managed_key.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account_customer_managed_key) (resource)
 - [azurerm_cognitive_account_project.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account_project) (resource)
 - [azurerm_cognitive_account_rai_blocklist.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account_rai_blocklist) (resource)
 - [azurerm_cognitive_account_rai_policy.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account_rai_policy) (resource)
 - [azurerm_cognitive_deployment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_deployment) (resource)
+- [azurerm_role_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
+- [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) (data source)
 
 ## Required Inputs
 
@@ -72,6 +89,7 @@ object({
     customer_managed_key = optional(object({
       key_vault_key_id   = string
       identity_client_id = optional(string)
+      standalone         = optional(bool, false)
     }))
     identity = optional(object({
       type         = optional(string, "UserAssigned")
@@ -136,11 +154,68 @@ object({
       description  = optional(string)
       display_name = optional(string)
       tags         = optional(map(string))
-      identity = object({
+      identity = optional(object({
         type         = optional(string, "SystemAssigned")
         identity_ids = optional(list(string))
-      })
+      }), {})
+      role_assignments = optional(map(object({
+        scope                                  = string
+        principal_id                           = optional(string)
+        name                                   = optional(string)
+        role_definition_name                   = optional(string)
+        role_definition_id                     = optional(string)
+        description                            = optional(string)
+        principal_type                         = optional(string, "ServicePrincipal")
+        condition                              = optional(string)
+        condition_version                      = optional(string)
+        delegated_managed_identity_resource_id = optional(string)
+        skip_service_principal_aad_check       = optional(bool)
+      })), {})
+      connections = optional(map(object({
+        name      = optional(string)
+        category  = string
+        target    = string
+        auth_type = optional(string, "AAD")
+        metadata  = optional(map(string), {})
+      })), {})
+      capability_host = optional(object({
+        name                       = optional(string)
+        capability_host_kind       = optional(string, "Agents")
+        storage_connections        = optional(list(string), [])
+        thread_storage_connections = optional(list(string), [])
+        vector_store_connections   = optional(list(string), [])
+      }))
     })), {})
+    role_assignments = optional(map(object({
+      scope                                  = optional(string)
+      principal_id                           = optional(string)
+      name                                   = optional(string)
+      role_definition_name                   = optional(string)
+      role_definition_id                     = optional(string)
+      description                            = optional(string)
+      principal_type                         = optional(string)
+      condition                              = optional(string)
+      condition_version                      = optional(string)
+      delegated_managed_identity_resource_id = optional(string)
+      skip_service_principal_aad_check       = optional(bool)
+    })), {})
+    connections = optional(map(object({
+      name        = optional(string)
+      category    = string
+      target      = optional(string)
+      auth_type   = optional(string, "AAD")
+      metadata    = optional(map(string), {})
+      api_key     = optional(string)
+      account_key = optional(string)
+      custom_keys = optional(map(string))
+    })), {})
+    capability_host = optional(object({
+      name                       = optional(string)
+      capability_host_kind       = optional(string, "Agents")
+      storage_connections        = optional(list(string), [])
+      thread_storage_connections = optional(list(string), [])
+      vector_store_connections   = optional(list(string), [])
+    }))
   })
 ```
 
@@ -184,6 +259,18 @@ Description: Contains all the outputs for the cognitive account
 
 Description: Contains all the outputs for the cognitive blocklists
 
+### <a name="output_capability_host"></a> [capability\_host](#output\_capability\_host)
+
+Description: Contains all the outputs for the account capability host
+
+### <a name="output_connections"></a> [connections](#output\_connections)
+
+Description: Contains all the outputs for the account connections
+
+### <a name="output_customer_managed_key"></a> [customer\_managed\_key](#output\_customer\_managed\_key)
+
+Description: Contains all the outputs for the standalone customer managed key
+
 ### <a name="output_deployments"></a> [deployments](#output\_deployments)
 
 Description: Contains all the outputs for the cognitive deployments
@@ -192,9 +279,21 @@ Description: Contains all the outputs for the cognitive deployments
 
 Description: Contains all the outputs for the cognitive policies
 
+### <a name="output_project_capability_hosts"></a> [project\_capability\_hosts](#output\_project\_capability\_hosts)
+
+Description: Contains all the outputs for the project capability hosts
+
+### <a name="output_project_connections"></a> [project\_connections](#output\_project\_connections)
+
+Description: Contains all the outputs for the project connections
+
 ### <a name="output_projects"></a> [projects](#output\_projects)
 
 Description: Contains all the outputs for the cognitive account projects
+
+### <a name="output_role_assignments"></a> [role\_assignments](#output\_role\_assignments)
+
+Description: Contains all the outputs for the role assignments
 <!-- END_TF_DOCS -->
 
 ## Goals
