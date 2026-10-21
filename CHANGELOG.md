@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.1](https://github.com/CloudNationHQ/terraform-azure-cog/compare/v3.1.0...v3.1.1) (2026-10-21)
+
+
+### Bug Fixes
+
+* avoid null dereference on customer_managed_key for Terraform &lt; 1.12 ([#50](https://github.com/CloudNationHQ/terraform-azure-cog/issues/50)) ([39a8967](https://github.com/CloudNationHQ/terraform-azure-cog/commit/39a89672f899bceb0859a3f4ef53a9475d67b133))
+
 ## [3.1.0](https://github.com/CloudNationHQ/terraform-azure-cog/compare/v3.0.0...v3.1.0) (2026-09-30)
 
 
