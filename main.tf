@@ -32,7 +32,9 @@ resource "azurerm_cognitive_account" "this" {
   )
 
   dynamic "customer_managed_key" {
-    for_each = var.account.customer_managed_key != null && !var.account.customer_managed_key.standalone ? { this = var.account.customer_managed_key } : {}
+    for_each = var.account.customer_managed_key == null ? {} : (
+      var.account.customer_managed_key.standalone ? {} : { this = var.account.customer_managed_key }
+    )
 
     content {
       key_vault_key_id   = customer_managed_key.value.key_vault_key_id
@@ -184,7 +186,9 @@ resource "azurerm_cognitive_account_project" "this" {
 }
 
 resource "azurerm_cognitive_account_customer_managed_key" "this" {
-  for_each = var.account.customer_managed_key != null && var.account.customer_managed_key.standalone ? { this = var.account.customer_managed_key } : {}
+  for_each = var.account.customer_managed_key == null ? {} : (
+    var.account.customer_managed_key.standalone ? { this = var.account.customer_managed_key } : {}
+  )
 
   cognitive_account_id = azurerm_cognitive_account.this.id
   key_vault_key_id     = each.value.key_vault_key_id
