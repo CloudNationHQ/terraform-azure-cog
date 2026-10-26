@@ -51,6 +51,7 @@ variable "account" {
       name                       = optional(string)
       dynamic_throttling_enabled = optional(bool)
       rai_policy_name            = optional(string)
+      spillover_deployment_name  = optional(string)
       version_upgrade_option     = optional(string)
       model = object({
         format  = string
