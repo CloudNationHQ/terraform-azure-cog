@@ -98,6 +98,7 @@ resource "azurerm_cognitive_deployment" "this" {
   cognitive_account_id       = azurerm_cognitive_account.this.id
   dynamic_throttling_enabled = each.value.dynamic_throttling_enabled
   rai_policy_name            = each.value.rai_policy_name
+  spillover_deployment_name  = each.value.spillover_deployment_name
   version_upgrade_option     = each.value.version_upgrade_option
 
   model {
