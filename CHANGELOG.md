@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.0](https://github.com/CloudNationHQ/terraform-azure-cog/compare/v3.1.1...v3.2.0) (2026-11-03)
+
+
+### Features
+
+* add foundry example and rename deployments example to openai ([#54](https://github.com/CloudNationHQ/terraform-azure-cog/issues/54)) ([01f8ee7](https://github.com/CloudNationHQ/terraform-azure-cog/commit/01f8ee7fe3665d85970f6af1334090731df529f6)), closes [#51](https://github.com/CloudNationHQ/terraform-azure-cog/issues/51)
+* add spillover_deployment_name to deployments ([#55](https://github.com/CloudNationHQ/terraform-azure-cog/issues/55)) ([447ef0e](https://github.com/CloudNationHQ/terraform-azure-cog/commit/447ef0ecc319719de19686fd181411ae0bc985cc)), closes [#53](https://github.com/CloudNationHQ/terraform-azure-cog/issues/53)
+
 ## [3.1.1](https://github.com/CloudNationHQ/terraform-azure-cog/compare/v3.1.0...v3.1.1) (2026-10-21)
 
 
