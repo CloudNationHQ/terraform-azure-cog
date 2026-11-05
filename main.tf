@@ -214,7 +214,21 @@ resource "azapi_update_resource" "stored_completions" {
     error_message_regex = ["RequestConflict", "TransientError", "Etag conflict"]
   }
 
-  depends_on = [azurerm_cognitive_account_customer_managed_key.this]
+  depends_on = [
+    azurerm_cognitive_account_customer_managed_key.this,
+    azurerm_cognitive_deployment.this,
+    azurerm_cognitive_account_project.this,
+    azurerm_cognitive_account_rai_blocklist.this,
+    azurerm_cognitive_account_rai_policy.this,
+    azurerm_cognitive_account_connection_entra_id.this,
+    azurerm_cognitive_account_connection_account_managed_identity.this,
+    azurerm_cognitive_account_connection_api_key.this,
+    azurerm_cognitive_account_connection_account_key.this,
+    azurerm_cognitive_account_connection_custom_keys.this,
+    azapi_resource.capability_host,
+    azapi_resource.project_connection,
+    azapi_resource.project_capability_host
+  ]
 }
 
 resource "azurerm_role_assignment" "this" {

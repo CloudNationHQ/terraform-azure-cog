@@ -317,9 +317,9 @@ For more information, please see our testing [guidelines](./TESTING.md)
 
 When `version_upgrade_option` is not set on a deployment, the provider default `OnceNewDefaultVersionAvailable` applies. The available options are:
 
-- `OnceNewDefaultVersionAvailable`: the deployment upgrades to the new default version within two weeks of the default changing.
-- `OnceCurrentVersionExpired`: the deployment upgrades to the default version once the current version is retired.
-- `NoAutoUpgrade`: the deployment never upgrades automatically and stops working when its model version is retired.
+- `OnceNewDefaultVersionAvailable`: the deployment upgrades automatically when a new default version is set. Azure announces this at least two weeks in advance.
+- `OnceCurrentVersionExpired`: the deployment upgrades automatically to the next available version when the current version is retired.
+- `NoAutoUpgrade`: the deployment never upgrades automatically. It stops accepting requests and returns errors after the model is retired.
 
 Set the option explicitly on every deployment to control when the model version changes.
 
