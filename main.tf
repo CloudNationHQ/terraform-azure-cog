@@ -198,6 +198,39 @@ resource "azurerm_cognitive_account_customer_managed_key" "this" {
   depends_on = [azurerm_role_assignment.this]
 }
 
+resource "azapi_update_resource" "stored_completions" {
+  for_each = var.account.stored_completions_disabled != null ? { this = var.account.stored_completions_disabled } : {}
+
+  type        = "Microsoft.CognitiveServices/accounts@2025-09-01"
+  resource_id = azurerm_cognitive_account.this.id
+
+  body = {
+    properties = {
+      storedCompletionsDisabled = each.value
+    }
+  }
+
+  retry = {
+    error_message_regex = ["RequestConflict", "TransientError", "Etag conflict"]
+  }
+
+  depends_on = [
+    azurerm_cognitive_account_customer_managed_key.this,
+    azurerm_cognitive_deployment.this,
+    azurerm_cognitive_account_project.this,
+    azurerm_cognitive_account_rai_blocklist.this,
+    azurerm_cognitive_account_rai_policy.this,
+    azurerm_cognitive_account_connection_entra_id.this,
+    azurerm_cognitive_account_connection_account_managed_identity.this,
+    azurerm_cognitive_account_connection_api_key.this,
+    azurerm_cognitive_account_connection_account_key.this,
+    azurerm_cognitive_account_connection_custom_keys.this,
+    azapi_resource.capability_host,
+    azapi_resource.project_connection,
+    azapi_resource.project_capability_host
+  ]
+}
+
 resource "azurerm_role_assignment" "this" {
   for_each = merge(
     {
