@@ -22,13 +22,14 @@ module "cognitiveservices" {
   version = "~> 3.0"
 
   account = {
-    name                       = module.naming.cognitive_account.name_unique
-    resource_group_name        = module.rg.groups.demo.name
-    location                   = module.rg.groups.demo.location
-    sku_name                   = "S0"
-    kind                       = "AIServices"
-    custom_subdomain_name      = module.naming.cognitive_account.name_unique
-    project_management_enabled = true
+    name                        = module.naming.cognitive_account.name_unique
+    resource_group_name         = module.rg.groups.demo.name
+    location                    = module.rg.groups.demo.location
+    sku_name                    = "S0"
+    kind                        = "AIServices"
+    custom_subdomain_name       = module.naming.cognitive_account.name_unique
+    project_management_enabled  = true
+    stored_completions_disabled = true
 
     identity = {
       type = "SystemAssigned"
@@ -36,6 +37,8 @@ module "cognitiveservices" {
 
     deployments = {
       gpt-4o = {
+        version_upgrade_option = "OnceCurrentVersionExpired"
+
         model = {
           format = "OpenAI"
           name   = "gpt-4o"

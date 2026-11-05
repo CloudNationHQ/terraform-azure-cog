@@ -198,6 +198,25 @@ resource "azurerm_cognitive_account_customer_managed_key" "this" {
   depends_on = [azurerm_role_assignment.this]
 }
 
+resource "azapi_update_resource" "stored_completions" {
+  for_each = var.account.stored_completions_disabled != null ? { this = var.account.stored_completions_disabled } : {}
+
+  type        = "Microsoft.CognitiveServices/accounts@2025-09-01"
+  resource_id = azurerm_cognitive_account.this.id
+
+  body = {
+    properties = {
+      storedCompletionsDisabled = each.value
+    }
+  }
+
+  retry = {
+    error_message_regex = ["RequestConflict", "TransientError", "Etag conflict"]
+  }
+
+  depends_on = [azurerm_cognitive_account_customer_managed_key.this]
+}
+
 resource "azurerm_role_assignment" "this" {
   for_each = merge(
     {
