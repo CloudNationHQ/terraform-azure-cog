@@ -40,6 +40,7 @@ The following resources are used by this module:
 - [azapi_resource.capability_host](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.project_capability_host](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.project_connection](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_update_resource.stored_completions](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/update_resource) (resource)
 - [azurerm_cognitive_account.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account) (resource)
 - [azurerm_cognitive_account_connection_account_key.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account_connection_account_key) (resource)
 - [azurerm_cognitive_account_connection_account_managed_identity.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_account_connection_account_managed_identity) (resource)
@@ -83,6 +84,7 @@ object({
     outbound_network_access_restricted           = optional(bool)
     public_network_access_enabled                = optional(bool)
     project_management_enabled                   = optional(bool)
+    stored_completions_disabled                  = optional(bool)
     qna_runtime_endpoint                         = optional(string)
     custom_question_answering_search_service_id  = optional(string)
     custom_question_answering_search_service_key = optional(string)
@@ -117,7 +119,7 @@ object({
       dynamic_throttling_enabled = optional(bool)
       rai_policy_name            = optional(string)
       spillover_deployment_name  = optional(string)
-      version_upgrade_option     = optional(string)
+      version_upgrade_option     = optional(string) # provider default: OnceNewDefaultVersionAvailable
       model = object({
         format  = string
         name    = string
@@ -306,6 +308,20 @@ For more information, please see our [goals and non-goals](./GOALS.md).
 For more information, please see our testing [guidelines](./TESTING.md)
 
 ## Notes
+
+### Stored completions
+
+`stored_completions_disabled` is applied with an `azapi_update_resource`, because `azurerm_cognitive_account` does not support it yet. Removing the property from the configuration does not revert the setting in Azure. Set it to `false` explicitly to re-enable stored completions.
+
+### Deployment version upgrades
+
+When `version_upgrade_option` is not set on a deployment, the provider default `OnceNewDefaultVersionAvailable` applies. The available options are:
+
+- `OnceNewDefaultVersionAvailable`: the deployment upgrades to the new default version within two weeks of the default changing.
+- `OnceCurrentVersionExpired`: the deployment upgrades to the current default version when the current version is retired.
+- `NoAutoUpgrade`: the deployment never upgrades automatically. It stops accepting requests and returns errors after the model is retired.
+
+Set the option explicitly on every deployment to control when the model version changes.
 
 Using a dedicated module, we've developed a naming convention for resources that's based on specific regular expressions for each type, ensuring correct abbreviations and offering flexibility with multiple prefixes and suffixes.
 

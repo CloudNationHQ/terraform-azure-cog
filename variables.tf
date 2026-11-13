@@ -18,6 +18,7 @@ variable "account" {
     outbound_network_access_restricted           = optional(bool)
     public_network_access_enabled                = optional(bool)
     project_management_enabled                   = optional(bool)
+    stored_completions_disabled                  = optional(bool)
     qna_runtime_endpoint                         = optional(string)
     custom_question_answering_search_service_id  = optional(string)
     custom_question_answering_search_service_key = optional(string)
@@ -52,7 +53,7 @@ variable "account" {
       dynamic_throttling_enabled = optional(bool)
       rai_policy_name            = optional(string)
       spillover_deployment_name  = optional(string)
-      version_upgrade_option     = optional(string)
+      version_upgrade_option     = optional(string) # provider default: OnceNewDefaultVersionAvailable
       model = object({
         format  = string
         name    = string
