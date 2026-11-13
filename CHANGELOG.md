@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.1](https://github.com/CloudNationHQ/terraform-azure-cog/compare/v3.2.0...v3.2.1) (2026-11-13)
+
+
+### Bug Fixes
+
+* order deployments after rai policies ([#62](https://github.com/CloudNationHQ/terraform-azure-cog/issues/62)) ([b7eba8e](https://github.com/CloudNationHQ/terraform-azure-cog/commit/b7eba8eb85fa1c148b5cb62457969a52eb7f3135))
+
 ## [3.2.0](https://github.com/CloudNationHQ/terraform-azure-cog/compare/v3.1.1...v3.2.0) (2026-11-03)
 
 
