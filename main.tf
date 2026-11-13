@@ -114,6 +114,11 @@ resource "azurerm_cognitive_deployment" "this" {
     family   = each.value.sku.family
     capacity = each.value.sku.capacity
   }
+
+  # rai_policy_name is a plain string, so terraform cannot infer this dependency.
+  # without it, a deployment can be created before its custom policy exists, and
+  # the policy can be destroyed while a deployment still references it.
+  depends_on = [azurerm_cognitive_account_rai_policy.this]
 }
 
 resource "azurerm_cognitive_account_rai_blocklist" "this" {
