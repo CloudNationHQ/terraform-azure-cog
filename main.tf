@@ -114,6 +114,8 @@ resource "azurerm_cognitive_deployment" "this" {
     family   = each.value.sku.family
     capacity = each.value.sku.capacity
   }
+
+  depends_on = [azurerm_cognitive_account_rai_policy.this]
 }
 
 resource "azurerm_cognitive_account_rai_blocklist" "this" {

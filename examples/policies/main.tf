@@ -38,10 +38,12 @@ module "cognitiveservices" {
           name     = "DataZoneStandard"
           capacity = 100
         }
+        rai_policy_name = "example-policy"
       }
     }
     policies = {
       example = {
+        name             = "example-policy"
         base_policy_name = "Microsoft.Default"
         content_filters = {
           filter_hate = {
